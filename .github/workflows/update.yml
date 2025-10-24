@@ -1,0 +1,22 @@
+name: Update MN Lottery JSON Data
+update.yml on:
+  schedule:
+    - cron: "0 12 * * *"  # every day 6 AM CST
+  workflow_dispatch:
+
+jobs:
+  update:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v3
+      - uses: actions/setup-python@v4
+        with:
+          python-version: "3.10"
+      - run: pip install requests
+      - run: python update_data.py
+      - run: |
+          git config --global user.email "data-bot@users.noreply.github.com"
+          git config --global user.name "MN Lottery Data Bot"
+          git add .
+          git commit -m "Auto update $(date)" || echo "No changes"
+          git push
